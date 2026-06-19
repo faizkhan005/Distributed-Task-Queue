@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TaskQueue.Application\TaskQueue.Application.csproj" />
     <ProjectReference Include="..\TaskQueue.Domain\TaskQueue.Domain.csproj" />
   </ItemGroup>
 
