@@ -1,3 +1,7 @@
+using Hangfire;
+using Scalar.AspNetCore;
+using TaskQueue.Api.Filters;
+using TaskQueue.Api.Middleware;
 using TaskQueue.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,15 +15,31 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
+app.UseMiddleware<GlobalExceptionMiddleware>();
+app.UseMiddleware<CorrelationIdMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference(opts =>
+    {
+        opts.Title = "Task Queue API";
+        opts.Theme = ScalarTheme.Purple;
+    });
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
-app.UseAuthorization();
+//app.UseAuthorization();
+
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = [new HangfireDashboardAuthFilter()],
+    AppPath = "/",
+    DashboardTitle = "Task Queue — Job Dashboard",
+    StatsPollingInterval = 5000
+});
 
 app.MapControllers();
 
