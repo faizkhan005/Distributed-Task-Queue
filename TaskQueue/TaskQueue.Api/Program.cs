@@ -1,5 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using TaskQueue.Infrastructure.Persistence;
+using TaskQueue.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,11 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
-builder.Services.AddDbContext<TaskQueueDbContext>(opts =>
-            opts.UseNpgsql(
-                builder.Configuration.GetConnectionString("Postgres"),
-                npgsql => npgsql.MigrationsAssembly(typeof(TaskQueueDbContext).Assembly.FullName)));
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
