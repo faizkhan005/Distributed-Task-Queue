@@ -66,7 +66,7 @@ public static class InfrastructureServiceExtensions
                         SchemaName = "hangfire"
                     })
                 .UseFilter(new DeadLetterJobFilter(sp, logger))
-                .UseFilter(new JobLoggingFilter(loggingLogger));
+                .UseFilter(new JobLoggingFilter(sp,loggingLogger));
         });
 
         // Hangfire server — three named queues with priority order
