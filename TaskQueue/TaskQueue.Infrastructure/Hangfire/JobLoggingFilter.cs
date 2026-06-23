@@ -34,6 +34,10 @@ public class JobLoggingFilter : JobFilterAttribute, IServerFilter
             context.BackgroundJob.Id,
             context.BackgroundJob.Job.Type.Name,
             attempt);
+        if (retryCount == 0)
+        {
+            _ = MarkProcessingAsync(context.BackgroundJob.Id);
+        }
     }
 
     public void OnPerformed(PerformedContext context)
@@ -87,6 +91,26 @@ public class JobLoggingFilter : JobFilterAttribute, IServerFilter
         {
             _logger.LogError(innerEx,
                 "Failed to update job record status for HangfireJobId: {Id}", hangfireJobId);
+        }
+    }
+
+    private async Task MarkProcessingAsync(string hangfireJobId)
+    {
+        try
+        {
+            using var scope = _services.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<IJobRecordRepository>();
+
+            var record = await repo.GetByHangfireIdAsync(hangfireJobId);
+            if (record is null) return;
+
+            record.MarkProcessing(hangfireJobId);
+            await repo.UpdateAsync(record);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Failed to mark job processing for HangfireJobId: {Id}", hangfireJobId);
         }
     }
 }
