@@ -105,7 +105,7 @@ Idempotent batch sync between two tables. Safe to re-run — uses upsert semanti
 
 ## API reference
 
-See [wiki/API-Reference.md](wiki/API-Reference) for all endpoints with curl examples.
+See [wiki/API-Reference.md](./wiki/API-Reference) for all endpoints with curl examples.
 
 ```bash
 # Enqueue a notification
