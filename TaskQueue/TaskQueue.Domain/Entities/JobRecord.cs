@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TaskQueue.Domain.Enums;
+﻿using TaskQueue.Domain.Enums;
 
 namespace TaskQueue.Domain.Entities;
 
@@ -43,6 +40,12 @@ public class JobRecord
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
+    }
+
+    public void UpdateHangfireJobId(string hangfireJobId)
+    {
+        HangfireJobId = hangfireJobId;
+        UpdatedAt = DateTime.UtcNow;
     }
 
     public void MarkProcessing(string hangfireJobId)

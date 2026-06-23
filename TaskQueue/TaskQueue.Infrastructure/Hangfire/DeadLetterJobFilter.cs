@@ -27,6 +27,9 @@ public class DeadLetterJobFilter : JobFilterAttribute, IApplyStateFilter
 
     public void OnStateApplied(ApplyStateContext context, IWriteOnlyTransaction transaction)
     {
+        _logger.LogInformation(">>> DeadLetterFilter fired | JobId: {JobId} | NewState: {State}",
+       context.BackgroundJob.Id,
+       context.NewState.GetType().Name);   // ← add this
         // Only act when a job permanently fails (not transient retry)
         if (context.NewState is not FailedState failedState) return;
 
@@ -62,7 +65,6 @@ public class DeadLetterJobFilter : JobFilterAttribute, IApplyStateFilter
                 );
 
                 await failureRepo.AddAsync(failure);
-
                 if (jobRecord is not null)
                 {
                     jobRecord.MarkDeadLettered(failedState.Exception?.Message ?? "Max retries exceeded");
