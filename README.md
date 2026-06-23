@@ -141,7 +141,7 @@ dotnet test tests/TaskQueue.IntegrationTests/
 
 Full documentation in [wiki/](wiki/):
 
-- [Architecture](wiki/Architecture.md)
+- [Architecture](../../wiki/Architecture.md)
 - [Job Lifecycle](wiki/Job-Lifecycle.md)
 - [Retry Policy](wiki/Retry-Policy.md)
 - [Dead-Letter Queue](wiki/Dead-Letter-Queue.md)
