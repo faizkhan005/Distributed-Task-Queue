@@ -73,6 +73,9 @@ public class JobEnqueueService : IJobEnqueueService
             "reports",
             job => job.ExecuteAsync(payload, record.Id.ToString()));
 
+        record.UpdateHangfireJobId(hangfireId);
+        await _jobRecords.UpdateAsync(record, ct);
+
         _logger.LogInformation(
             "Enqueued report job | JobRecordId: {RecordId} | HangfireId: {HangfireId} | Type: {ReportType}",
             record.Id, hangfireId, request.ReportType);
@@ -98,6 +101,9 @@ public class JobEnqueueService : IJobEnqueueService
         var hangfireId = _hangfire.Enqueue<IDataSyncJob>(
             "sync",
             job => job.ExecuteAsync(payload, record.Id.ToString()));
+
+        record.UpdateHangfireJobId(hangfireId);
+        await _jobRecords.UpdateAsync(record, ct);
 
         _logger.LogInformation(
             "Enqueued data sync job | JobRecordId: {RecordId} | HangfireId: {HangfireId} | {Source} → {Dest}",

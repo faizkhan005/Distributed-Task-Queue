@@ -25,8 +25,6 @@ public class NotificationJob : INotificationJob
         OnAttemptsExceeded = AttemptsExceededAction.Fail)]
     public async Task ExecuteAsync(NotificationJobPayload payload, string jobRecordId)
     {
-        var correlationId = Guid.TryParse(jobRecordId, out var id) ? jobRecordId : Guid.NewGuid().ToString();
-
         using var scope = _logger.BeginScope(new Dictionary<string, object>
         {
             ["JobRecordId"] = jobRecordId,
@@ -38,15 +36,8 @@ public class NotificationJob : INotificationJob
             payload.RecipientEmail, payload.Channel);
 
         // Update record to processing
-        if (Guid.TryParse(jobRecordId, out var recordId))
-        {
-            var record = await _jobRecords.GetByIdAsync(recordId);
-            if (record is not null)
-            {
-                record.MarkProcessing(record.HangfireJobId);
-                await _jobRecords.UpdateAsync(record);
-            }
-        }
+        Guid.TryParse(jobRecordId, out Guid recordId);
+        
 
         // Simulate network latency
         await Task.Delay(TimeSpan.FromMilliseconds(Random.Shared.Next(100, 500)));
