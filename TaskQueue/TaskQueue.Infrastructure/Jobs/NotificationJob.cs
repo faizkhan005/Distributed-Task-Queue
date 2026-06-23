@@ -13,7 +13,7 @@ public class NotificationJob : INotificationJob
 
     // Configurable via env var NOTIFICATION_FAILURE_RATE (0.0 - 1.0)
     private static readonly double FailureRate =
-        double.TryParse(Environment.GetEnvironmentVariable("NOTIFICATION_FAILURE_RATE"), out var r) ? r : 0.2;
+        double.TryParse(Environment.GetEnvironmentVariable("NOTIFICATION_FAILURE_RATE"), out var r) ? r : 1.0;
 
     public NotificationJob(IJobRecordRepository jobRecords, ILogger<NotificationJob> logger)
     {
@@ -43,7 +43,7 @@ public class NotificationJob : INotificationJob
             var record = await _jobRecords.GetByIdAsync(recordId);
             if (record is not null)
             {
-                record.MarkProcessing(jobRecordId);
+                record.MarkProcessing(record.HangfireJobId);
                 await _jobRecords.UpdateAsync(record);
             }
         }

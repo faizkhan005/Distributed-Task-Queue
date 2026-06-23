@@ -45,6 +45,8 @@ public static class InfrastructureServiceExtensions
         services.AddScoped<IReportGenerationJob, ReportGenerationJob>();
         services.AddScoped<IDataSyncJob, DataSyncJob>();
 
+        // Seeder
+        services.AddScoped<DatabaseSeeder>();
 
         // Hangfire — use PostgreSQL as persistent storage
         services.AddHangfire((sp, config) =>
@@ -57,7 +59,12 @@ public static class InfrastructureServiceExtensions
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
                 .UsePostgreSqlStorage(opts =>
-                    opts.UseNpgsqlConnection(configuration.GetConnectionString("Postgres")))
+                    opts.UseNpgsqlConnection(configuration.GetConnectionString("Postgres")),
+                    new PostgreSqlStorageOptions
+                    {
+                        PrepareSchemaIfNecessary = true,
+                        SchemaName = "hangfire"
+                    })
                 .UseFilter(new DeadLetterJobFilter(sp, logger))
                 .UseFilter(new JobLoggingFilter(loggingLogger));
         });

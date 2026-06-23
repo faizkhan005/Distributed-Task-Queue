@@ -44,6 +44,8 @@ public class JobEnqueueService : IJobEnqueueService
         var hangfireId = _hangfire.Enqueue<INotificationJob>(
             "notifications",
             job => job.ExecuteAsync(payload, record.Id.ToString()));
+        record.UpdateHangfireJobId(hangfireId);
+        await _jobRecords.UpdateAsync(record, ct);
 
         _logger.LogInformation(
             "Enqueued notification job | JobRecordId: {RecordId} | HangfireId: {HangfireId} | Recipient: {Email}",

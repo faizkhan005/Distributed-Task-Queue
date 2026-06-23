@@ -6,6 +6,7 @@ using System.Text.Json;
 using TaskQueue.Api.Filters;
 using TaskQueue.Api.Middleware;
 using TaskQueue.Infrastructure;
+using TaskQueue.Infrastructure.Persistence;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -111,6 +112,13 @@ try
     {
         Predicate = _ => false
     });
+
+    // Run DB migrations + seed on startup
+    using (var scope = app.Services.CreateScope())
+    {
+        var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
+        await seeder.SeedAsync();
+    }
 
     Log.Information("Task Queue API starting on {Environment}", app.Environment.EnvironmentName);
     await app.RunAsync();
