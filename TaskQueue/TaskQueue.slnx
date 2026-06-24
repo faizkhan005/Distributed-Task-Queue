@@ -3,4 +3,5 @@
   <Project Path="TaskQueue.Application/TaskQueue.Application.csproj" />
   <Project Path="TaskQueue.Domain/TaskQueue.Domain.csproj" />
   <Project Path="TaskQueue.Infrastructure/TaskQueue.Infrastructure.csproj" />
+  <Project Path="tests/TaskQueue.UnitTests/TaskQueue.UnitTests.csproj" Id="baf347d4-9783-43c5-b208-c214d1f72917" />
 </Solution>
